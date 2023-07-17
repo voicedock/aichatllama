@@ -35,7 +35,7 @@ func (m *ModelManager) LazyLoadModel(cfg *config.ModelWrap) (*llama.LLama, error
 		cfg.ModelPath,
 		llama.EnableF16Memory,
 		llama.SetContext(m.contextSize),
-		llama.EnableEmbeddings,
+		/*llama.EnableEmbeddings,*/
 		llama.SetGPULayers(m.gpuLayers),
 	)
 	if err != nil {

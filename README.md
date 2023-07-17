@@ -1,16 +1,12 @@
 # AI chat llama
-Llama.cpp based VoiceDock [AI chat](https://github.com/voicedock/voicedock-specs/tree/main/proto/voicedock/extensions/aichat/v1) implementation
+Llama.cpp based VoiceDock [AI chat](https://github.com/voicedock/voicedock-specs/tree/main/proto/voicedock/core/aichat/v1) implementation
 
 
 > Provides gRPC API for AI chat based on [llama.cpp](https://github.com/ggerganov/llama.cpp) project.
 > Provides download of new model via API.
 
 # Usage
-Build docker image:
-```bash
-docker build -t ghcr.io/voicedock/aichatllama:latest .
-```
-Run docker container:
+Run docker container on CPU:
 ```bash
 docker run --rm \
   -v "$(pwd)/config:/data/config" \
@@ -18,8 +14,21 @@ docker run --rm \
   -p 9999:9999 \
   ghcr.io/voicedock/aichatllama:latest aichatllama
 ```
+
+Run docker container on GPU (OpenCL, Nvidia CUDA):
+```bash
+docker run --rm \
+  -v "$(pwd)/config:/data/config" \
+  -v "$(pwd)/dataset:/data/dataset" \
+  -e LLAMA_GPU_LAYERS=2 \
+  --runtime=nvidia --gpus all \
+  -p 9999:9999 \
+  ghcr.io/voicedock/aichatllama:gpu aichatllama
+```
+Tested on NVIDIA GeForce RTX 3090.
+
 ## API
-See implementation in [proto file](https://github.com/voicedock/voicedock-specs/blob/main/proto/voicedock/extensions/aichat/v1/aichat_api.proto).
+See implementation in [proto file](https://github.com/voicedock/voicedock-specs/blob/main/proto/voicedock/core/aichat/v1/aichat_api.proto).
 
 ## FAQ
 ### How to add a language pack?
@@ -41,18 +50,21 @@ See implementation in [proto file](https://github.com/voicedock/voicedock-specs/
 
 
 ## CONTRIBUTING
-Create protobuilder docker image:
-```bash
-cd ci/protobuilder && \
-docker build -t protobuilder .
-```
 Lint proto files:
 ```bash
 docker run --rm -w "/work" -v "$(pwd):/work" bufbuild/buf:latest lint internal/api/grpc/proto
 ```
 Generate grpc interface:
 ```bash
-docker run --rm -w "/work" -v "$(pwd):/work" protobuilder generate internal/api/grpc/proto --template internal/api/grpc/proto/buf.gen.yaml
+docker run --rm -w "/work" -v "$(pwd):/work" ghcr.io/voicedock/protobuilder:1.0.0 generate internal/api/grpc/proto --template internal/api/grpc/proto/buf.gen.yaml
+```
+Manual build CPU docker image:
+```bash
+docker build -t ghcr.io/voicedock/aichatllama:latest .
+```
+Manual build GPU docker image:
+```bash
+docker build -t ghcr.io/voicedock/aichatllama:gpu -f ./gpu.Dockerfile .
 ```
 
 ## Thanks

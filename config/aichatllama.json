@@ -2,6 +2,6 @@
   {
     "name": "WizardLM-30B-Uncensored",
     "download_url": "https://huggingface.co/TheBloke/WizardLM-30B-Uncensored-GGML/resolve/main/WizardLM-30B-Uncensored.ggmlv3.q4_1.bin",
-    "license": "Unknown"
+    "license": "Non-commercial bespoke license"
   }
 ]

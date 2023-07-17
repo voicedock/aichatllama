@@ -1,3 +1,4 @@
 dataset
-ci
 .idea
+vendor
+.DS_Store

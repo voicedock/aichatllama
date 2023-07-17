@@ -5,7 +5,7 @@ import (
 	"context"
 	"github.com/go-skynet/go-llama.cpp"
 	"github.com/voicedock/aichatllama/internal/aimodel"
-	aichatv1 "github.com/voicedock/aichatllama/internal/api/grpc/gen/voicedock/extensions/aichat/v1"
+	aichatv1 "github.com/voicedock/aichatllama/internal/api/grpc/gen/voicedock/core/aichat/v1"
 	"github.com/voicedock/aichatllama/internal/config"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
@@ -34,11 +34,13 @@ type ServerAiChat struct {
 }
 
 func (s *ServerAiChat) Generate(in *aichatv1.GenerateRequest, srv aichatv1.AichatAPI_GenerateServer) error {
+	s.logger.Debug("Generate -> FindDownloaded")
 	cfg := s.configService.FindDownloaded()
 	if cfg == nil {
 		return status.Error(codes.NotFound, "model not found")
 	}
 
+	s.logger.Debug("Generate -> LazyLoadModel")
 	model, err := s.manager.LazyLoadModel(cfg)
 	if err != nil {
 		return status.Errorf(codes.Internal, "failed to load model: %w", err)
@@ -46,7 +48,7 @@ func (s *ServerAiChat) Generate(in *aichatv1.GenerateRequest, srv aichatv1.Aicha
 
 	opts := []llama.PredictOption{
 		llama.SetTokenCallback(func(token string) bool {
-			s.logger.Debug("Send token", zap.String("token", token))
+			s.logger.Debug("Generate -> Send token", zap.String("token", token))
 			err := srv.Send(&aichatv1.GenerateResponse{TokenText: token})
 			if err != nil {
 				s.logger.Warn("Failed to send generation result", zap.Error(err))
@@ -65,18 +67,20 @@ func (s *ServerAiChat) Generate(in *aichatv1.GenerateRequest, srv aichatv1.Aicha
 		opts = append(opts, llama.Debug)
 	}
 
+	s.logger.Debug("Generate -> Predict")
 	_, err = model.Predict(in.Prompt, opts...)
 	if err != nil {
 		return status.Errorf(codes.Internal, "failed to predict: %w", err)
 	}
 
-	embeds, err := model.Embeddings(in.Prompt)
-	if err != nil {
-		s.logger.Warn("Embeddings error", zap.Error(err))
-	}
+	//embeds, err := model.Embeddings(in.Prompt)
+	//if err != nil {
+	//	s.logger.Warn("Embeddings error", zap.Error(err))
+	//}
+	//
+	//s.logger.Debug("Embeddings", zap.Float32s("embeds", embeds))
 
-	s.logger.Debug("Embeddings", zap.Float32s("embeds", embeds))
-
+	s.logger.Debug("Generate complete")
 	return nil
 }
 
@@ -97,5 +101,8 @@ func (s *ServerAiChat) GetModels(ctx context.Context, in *aichatv1.GetModelsRequ
 }
 
 func (s *ServerAiChat) DownloadModel(ctx context.Context, in *aichatv1.DownloadModelRequest) (*aichatv1.DownloadModelResponse, error) {
+	s.logger.Info("Starting download model", zap.String("name", in.Name))
+	defer s.logger.Info("Complete download model", zap.String("name", in.Name))
+
 	return &aichatv1.DownloadModelResponse{}, s.configService.Download(in.Name)
 }

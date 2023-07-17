@@ -13,7 +13,7 @@ WORKDIR /build
 
 RUN git clone --recurse-submodules https://github.com/go-skynet/go-llama.cpp && \
     cd go-llama.cpp && \
-    git checkout --recurse-submodules 35a3c99f08b5dfedc4bb92c00a7f4c8450821d45 && \
+    git checkout --recurse-submodules f104111358e8098aea69ce408b85b707528179ef && \
     cd .. && \
     make -C go-llama.cpp/ libbinding.a && \
     C_INCLUDE_PATH=/build/go-llama.cpp CGO_CXXFLAGS="-I/build/go-llama.cpp/llama.cpp/examples -I/build/go-llama.cpp/llama.cpp/" LIBRARY_PATH=/build/go-llama.cpp go build -o ./aichatllama ./cmd/aichatllama
@@ -26,3 +26,5 @@ RUN apt update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /build/aichatllama /usr/local/bin/aichatllama
+
+CMD ["/usr/local/bin/aichatllama"]

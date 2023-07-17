@@ -4,7 +4,7 @@ import (
 	"github.com/alexflint/go-arg"
 	"github.com/voicedock/aichatllama/internal/aimodel"
 	grpcapi "github.com/voicedock/aichatllama/internal/api/grpc"
-	aichatv1 "github.com/voicedock/aichatllama/internal/api/grpc/gen/voicedock/extensions/aichat/v1"
+	aichatv1 "github.com/voicedock/aichatllama/internal/api/grpc/gen/voicedock/core/aichat/v1"
 	"github.com/voicedock/aichatllama/internal/config"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -47,7 +47,11 @@ func main() {
 	dl := config.NewDownloader()
 	cr := config.NewReader(cfg.Config)
 	cs := config.NewService(cr, dl, logger, cfg.DataDir)
-	cs.LoadConfig()
+	err = cs.LoadConfig()
+	if err != nil {
+		logger.Fatal("Failed to load configuration", zap.Error(err))
+	}
+
 	mm := aimodel.NewModelManager(cfg.LlamaGpuLayers, cfg.LlamaContextSize)
 	defer mm.Unload()
 
