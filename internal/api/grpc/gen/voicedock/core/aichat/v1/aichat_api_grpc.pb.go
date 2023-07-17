@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             (unknown)
-// source: voicedock/extensions/aichat/v1/aichat_api.proto
+// source: voicedock/core/aichat/v1/aichat_api.proto
 
 package aichatv1
 
@@ -19,9 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AichatAPI_Generate_FullMethodName      = "/voicedock.extensions.aichat.v1.AichatAPI/Generate"
-	AichatAPI_GetModels_FullMethodName     = "/voicedock.extensions.aichat.v1.AichatAPI/GetModels"
-	AichatAPI_DownloadModel_FullMethodName = "/voicedock.extensions.aichat.v1.AichatAPI/DownloadModel"
+	AichatAPI_Generate_FullMethodName      = "/voicedock.core.aichat.v1.AichatAPI/Generate"
+	AichatAPI_GetModels_FullMethodName     = "/voicedock.core.aichat.v1.AichatAPI/GetModels"
+	AichatAPI_DownloadModel_FullMethodName = "/voicedock.core.aichat.v1.AichatAPI/DownloadModel"
 )
 
 // AichatAPIClient is the client API for AichatAPI service.
@@ -194,7 +194,7 @@ func _AichatAPI_DownloadModel_Handler(srv interface{}, ctx context.Context, dec 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AichatAPI_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "voicedock.extensions.aichat.v1.AichatAPI",
+	ServiceName: "voicedock.core.aichat.v1.AichatAPI",
 	HandlerType: (*AichatAPIServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -213,5 +213,5 @@ var AichatAPI_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "voicedock/extensions/aichat/v1/aichat_api.proto",
+	Metadata: "voicedock/core/aichat/v1/aichat_api.proto",
 }

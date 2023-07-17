@@ -1,16 +1,16 @@
 syntax = "proto3";
 
-package voicedock.extensions.aichat.v1;
+package voicedock.core.aichat.v1;
 
-option csharp_namespace = "Voicedock.Extensions.Aichat.V1";
-option go_package = "voicedock/extensions/aichat/v1;aichatv1";
+option csharp_namespace = "Voicedock.Core.Aichat.V1";
+option go_package = "voicedock/core/aichat/v1;aichatv1";
 option java_multiple_files = true;
 option java_outer_classname = "AichatApiProto";
-option java_package = "com.voicedock.extensions.aichat.v1";
-option objc_class_prefix = "VEA";
-option php_namespace = "Voicedock\\Extensions\\Aichat\\V1";
+option java_package = "com.voicedock.core.aichat.v1";
+option objc_class_prefix = "VCA";
+option php_namespace = "Voicedock\\Core\\Aichat\\V1";
 
-import "voicedock/extensions/aichat/v1/aichat.proto";
+import "voicedock/core/aichat/v1/aichat.proto";
 
 // Speech-to-text service.
 service AichatAPI {
